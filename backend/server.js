@@ -15,7 +15,10 @@ const server = http.createServer(app);
 // Set up Socket.io with CORS
 const io = socketIo(server, {
   cors: {
-    origin: "http://localhost:5173", // Frontend URL (Vite default)
+    origin: [
+        "http://localhost:5173", 
+        "https://chat-bot-6t1n.onrender.com",
+      ], // Frontend URL (Vite default)
     methods: ["GET", "POST"],
     credentials: true
   }
