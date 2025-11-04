@@ -165,7 +165,7 @@ function App() {
     
     try {
       const response = await axios({
-        url: "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=AIzaSyDWmkU6ltiPl-1AwdCFVwLzTMdrqfnCbAk",
+        url: "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=AIzaSyBndx4Kqm2ASE4Dg1UW9c_uKydblU1NZ1s",
         method: "post",
         data: {"contents":[{"parts":[{"text": question }]}]}
       });
