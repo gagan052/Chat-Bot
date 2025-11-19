@@ -6,7 +6,7 @@ import DOMPurify from 'dompurify';
 
 function App() {
   const [question, setQuestion] = useState("");
-  const [answer, setAnswer] = useState("");
+  
   const [isLoading, setIsLoading] = useState(false);
   const [chatHistory, setChatHistory] = useState([]);
   const [conversations, setConversations] = useState(() => {
@@ -81,7 +81,6 @@ function App() {
     setConversations(prev => [newConversation, ...prev]);
     setActiveConversationId(newId);
     setChatHistory([]);
-    setAnswer("");
   };
   
   // Switch to a different conversation
@@ -164,15 +163,9 @@ function App() {
     setChatHistory(prev => [...prev, userMessage]);
     
     try {
-      const response = await axios({
-        url: "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=AIzaSyBndx4Kqm2ASE4Dg1UW9c_uKydblU1NZ1s",
-        method: "post",
-        data: {"contents":[{"parts":[{"text": question }]}]}
-      });
-      
-      const aiResponse = response['data']['candidates'][0]['content']['parts'][0]['text'];
+      const response = await axios.post("http://localhost:5002/api/ai/generate", { prompt: question }, { timeout: 10000 });
+      const aiResponse = response?.data?.text;
       const formattedResponse = formatAIResponse(aiResponse);
-      setAnswer(aiResponse);
       
       // Add AI response to chat history
       const aiMessage = { 
@@ -196,12 +189,25 @@ function App() {
       }
     } catch (error) {
       console.error("Error generating answer:", error);
-      setChatHistory(prev => [...prev, { 
-        type: 'ai', 
-        content: "Sorry, I couldn't generate a response. Please try again.",
-        formattedContent: "<p>Sorry, I couldn't generate a response. Please try again.</p>",
-        timestamp: new Date().toISOString() 
-      }]);
+      const aiResponse = `I received your message: "${question}". This is a simulated response while the AI service is unavailable.`;
+      const formattedResponse = formatAIResponse(aiResponse);
+      const aiMessage = {
+        type: 'ai',
+        content: aiResponse,
+        formattedContent: formattedResponse,
+        timestamp: new Date().toISOString()
+      };
+      setChatHistory(prev => [...prev, aiMessage]);
+      if (conversations.find(conv => conv.id === activeConversationId)?.messages.length === 0) {
+        const title = question.length > 30 ? question.substring(0, 30) + '...' : question;
+        setConversations(prev => 
+          prev.map(conv => 
+            conv.id === activeConversationId 
+              ? { ...conv, title }
+              : conv
+          )
+        );
+      }
     } finally {
       setIsLoading(false);
       setQuestion(""); // Clear input after sending
@@ -308,7 +314,7 @@ function App() {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
             </svg>
             <p className="text-xl font-medium">Start a conversation</p>
-            <p className="text-sm mt-2">Ask anything you'd like to know</p>
+            <p className="text-sm mt-2">Ask anything you&apos;d like to know</p>
           </div>
         ) : (
           chatHistory.map((message, index) => (

@@ -61,10 +61,12 @@ mongoose.connection.on('reconnected', () => {
 // Import routes
 const userRoutes = require('./routes/userRoutes');
 const chatRoutes = require('./routes/chatRoutes');
+const aiRoutes = require('./routes/aiRoutes');
 
 // Use routes
 app.use('/api/users', userRoutes);
 app.use('/api/chats', chatRoutes);
+app.use('/api/ai', aiRoutes);
 
 // Basic route
 app.get('/', (req, res) => {
