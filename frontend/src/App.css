@@ -15,14 +15,18 @@
 .ai-response p {
   margin-bottom: 1rem;
 }
+.ai-response {
+  line-height: 1.7;
+  font-size: 0.95rem;
+}
 
 .ai-response p:last-child {
   margin-bottom: 0;
 }
 
 .ai-response ul, .ai-response ol {
-  margin: 1rem 0;
-  padding-left: 1.5rem;
+  margin: 0.5rem 0 0.5rem 1.25rem;
+  padding-left: 1rem;
 }
 
 .ai-response li {
@@ -30,12 +34,12 @@
 }
 
 .ai-response code {
-  background-color: rgba(0, 0, 0, 0.05);
-  padding: 0.2rem 0.4rem;
+  background: #2d2d2d;
+  padding: 0.15rem 0.35rem;
   border-radius: 0.25rem;
   font-family: 'Menlo', 'Monaco', 'Courier New', monospace;
   font-size: 0.9em;
-  color: #e83e8c;
+  color: #e2e8f0;
 }
 
 .ai-response strong {
@@ -273,3 +277,7 @@ pre {
   border-top-right-radius: 0.5rem;
   font-family: 'Inter', sans-serif;
 }
+.ai-response h1 { font-size: 1.5rem; font-weight: 700; margin: 0.6rem 0; }
+.ai-response h2 { font-size: 1.25rem; font-weight: 600; margin: 0.5rem 0; }
+.ai-response h3 { font-size: 1.125rem; font-weight: 600; margin: 0.4rem 0; }
+.ai-response blockquote { border-left: 4px solid #3b82f6; padding-left: 0.75rem; color: #cbd5e1; }

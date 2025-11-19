@@ -3,6 +3,7 @@ import './App.css'
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import DOMPurify from 'dompurify';
+import { marked } from 'marked';
 
 function App() {
   const [question, setQuestion] = useState("");
@@ -105,47 +106,13 @@ function App() {
     }
   };
   
-  // Format the AI response with proper markdown and code blocks
   const formatAIResponse = (text) => {
-    // Replace code blocks with properly formatted ones
-    let formattedText = text;
-    
-    // Format code blocks with ```language
-    formattedText = formattedText.replace(/```(\w*)\n([\s\S]*?)```/g, (match, language, code) => {
-      return `<div class="code-block">
-        <div class="code-header">
-          <span class="code-language">${language || 'code'}</span>
-        </div>
-        <pre><code class="${language || ''}">${code.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</code></pre>
-      </div>`;
+    marked.setOptions({
+      breaks: true,
+      gfm: true
     });
-    
-    // Format inline code with `code`
-    formattedText = formattedText.replace(/`([^`]+)`/g, '<code>$1</code>');
-    
-    // Format bold text with **text**
-    formattedText = formattedText.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
-    
-    // Format italic text with *text*
-    formattedText = formattedText.replace(/\*([^*]+)\*/g, '<em>$1</em>');
-    
-    // Format lists
-    formattedText = formattedText.replace(/^\s*[-*]\s+(.+)$/gm, '<li>$1</li>');
-    formattedText = formattedText.replace(/(<li>.+<\/li>\n?)+/g, '<ul>$&</ul>');
-    
-    // Format numbered lists
-    formattedText = formattedText.replace(/^\s*\d+\.\s+(.+)$/gm, '<li>$1</li>');
-    formattedText = formattedText.replace(/(<li>.+<\/li>\n?)+/g, '<ol>$&</ol>');
-    
-    // Format paragraphs
-    formattedText = formattedText.replace(/(?:\r\n|\r|\n){2,}/g, '</p><p>');
-    formattedText = `<p>${formattedText}</p>`;
-    
-    // Clean up any double paragraph tags
-    formattedText = formattedText.replace(/<\/p><p><\/p><p>/g, '</p><p>');
-    
-    // Sanitize the HTML to prevent XSS attacks
-    return DOMPurify.sanitize(formattedText);
+    const html = marked.parse(text || '');
+    return DOMPurify.sanitize(html);
   };
   
   // Generate answer from API
