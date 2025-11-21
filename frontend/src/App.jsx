@@ -1,9 +1,9 @@
 import { useState, useRef, useEffect } from 'react'
 import './App.css'
-import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import DOMPurify from 'dompurify';
 import { marked } from 'marked';
+import api from './api';
 
 function App() {
   const [question, setQuestion] = useState("");
@@ -130,7 +130,11 @@ function App() {
     setChatHistory(prev => [...prev, userMessage]);
     
     try {
-      const response = await axios.post("http://localhost:5002/api/ai/generate", { prompt: question }, { timeout: 10000 });
+      const response = await api.post(
+        '/ai/generate',
+        { prompt: question },
+        { timeout: 15000 }
+      );
       const aiResponse = response?.data?.text;
       const formattedResponse = formatAIResponse(aiResponse);
       
