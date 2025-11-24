@@ -31,6 +31,7 @@ function App() {
   const [activeConversationId, setActiveConversationId] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const chatContainerRef = useRef(null);
+  const streamTimerRef = useRef(null);
   
   // Load active conversation from localStorage
   useEffect(() => {
@@ -124,6 +125,32 @@ function App() {
     const html = marked.parse(text || '');
     return DOMPurify.sanitize(html);
   };
+
+  const streamAIResponse = (text) => {
+    const id = uuidv4();
+    const aiMessage = {
+      id,
+      type: 'ai',
+      content: '',
+      timestamp: new Date().toISOString()
+    };
+    setChatHistory(prev => [...prev, aiMessage]);
+    const chars = Array.from(text);
+    let i = 0;
+    if (streamTimerRef.current) clearInterval(streamTimerRef.current);
+    streamTimerRef.current = setInterval(() => {
+      i += 1;
+      const chunk = chars.slice(0, i).join('');
+      setChatHistory(prev => prev.map(m => m.id === id ? { ...m, content: chunk } : m));
+      if (i >= chars.length) {
+        clearInterval(streamTimerRef.current);
+        streamTimerRef.current = null;
+        const formatted = formatAIResponse(text);
+        setChatHistory(prev => prev.map(m => m.id === id ? { ...m, content: text, formattedContent: formatted } : m));
+        setIsLoading(false);
+      }
+    }, 15);
+  };
   
   // Generate answer from API
   async function generateAnswer() {
@@ -161,16 +188,7 @@ function App() {
         { timeout: 15000 }
       );
       const aiResponse = response?.data?.text;
-      const formattedResponse = formatAIResponse(aiResponse);
-      
-      // Add AI response to chat history
-      const aiMessage = { 
-        type: 'ai', 
-        content: aiResponse, 
-        formattedContent: formattedResponse,
-        timestamp: new Date().toISOString() 
-      };
-      setChatHistory(prev => [...prev, aiMessage]);
+      streamAIResponse(aiResponse || '');
       
       // Update conversation title if it's the first message
       if (conversations.find(conv => conv.id === activeConversationId)?.messages.length === 0) {
@@ -186,14 +204,7 @@ function App() {
     } catch (error) {
       console.error("Error generating answer:", error);
       const aiResponse = `I received your message: "${question}". This is a simulated response while the AI service is unavailable.`;
-      const formattedResponse = formatAIResponse(aiResponse);
-      const aiMessage = {
-        type: 'ai',
-        content: aiResponse,
-        formattedContent: formattedResponse,
-        timestamp: new Date().toISOString()
-      };
-      setChatHistory(prev => [...prev, aiMessage]);
+      streamAIResponse(aiResponse);
       if (conversations.find(conv => conv.id === activeConversationId)?.messages.length === 0) {
         const title = question.length > 30 ? question.substring(0, 30) + '...' : question;
         setConversations(prev => 
@@ -205,8 +216,7 @@ function App() {
         );
       }
     } finally {
-      setIsLoading(false);
-      setQuestion(""); // Clear input after sending
+      setQuestion("");
     }
   }
 
@@ -331,10 +341,14 @@ function App() {
                 {message.type === 'user' ? (
                   <div className="whitespace-pre-wrap">{message.content}</div>
                 ) : (
-                  <div 
-                    className="ai-response" 
-                    dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(message.formattedContent || message.content) }}
-                  />
+                  message.formattedContent ? (
+                    <div 
+                      className="ai-response" 
+                      dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(message.formattedContent) }}
+                    />
+                  ) : (
+                    <div className="ai-response whitespace-pre-wrap">{message.content}</div>
+                  )
                 )}
                 <div className="text-xs opacity-70 mt-2 text-right">
                   {message.timestamp && new Date(message.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
