@@ -28,21 +28,29 @@ const io = socketIo(server, {
 app.use(cors());
 app.use(express.json());
 
-// Connect to MongoDB with enhanced error handling
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  serverSelectionTimeoutMS: 5000, // Timeout after 5s instead of 30s
-  socketTimeoutMS: 45000, // Close sockets after 45s of inactivity
-})
+const tryConnect = async (uri) => {
+  return mongoose.connect(uri, {
+    serverSelectionTimeoutMS: 5000,
+    socketTimeoutMS: 45000,
+  });
+};
+
+tryConnect(process.env.MONGO_URI)
 .then(() => {
   console.log('MongoDB connected successfully');
-  // Log the database name to verify connection to correct database
   console.log('Connected to database:', mongoose.connection.name);
 })
-.catch(err => {
+.catch(async (err) => {
   console.error('MongoDB connection error:', err);
-  process.exit(1); // Exit with failure
+  if (process.env.MONGO_URI_FALLBACK) {
+    try {
+      await tryConnect(process.env.MONGO_URI_FALLBACK);
+      console.log('MongoDB connected using fallback URI');
+      console.log('Connected to database:', mongoose.connection.name);
+    } catch (e) {
+      console.error('MongoDB fallback connection error:', e);
+    }
+  }
 });
 
 // Add MongoDB connection event listeners for better monitoring
@@ -63,9 +71,16 @@ const userRoutes = require('./routes/userRoutes');
 const chatRoutes = require('./routes/chatRoutes');
 const aiRoutes = require('./routes/aiRoutes');
 
+const dbHealthCheck = (req, res, next) => {
+  if (mongoose.connection.readyState !== 1) {
+    return res.status(503).json({ message: 'Database not connected' });
+  }
+  next();
+};
+
 // Use routes
-app.use('/api/users', userRoutes);
-app.use('/api/chats', chatRoutes);
+app.use('/api/users', dbHealthCheck, userRoutes);
+app.use('/api/chats', dbHealthCheck, chatRoutes);
 app.use('/api/ai', aiRoutes);
 
 // Basic route

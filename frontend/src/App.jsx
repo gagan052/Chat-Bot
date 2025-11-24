@@ -10,6 +10,11 @@ function App() {
   
   const [isLoading, setIsLoading] = useState(false);
   const [chatHistory, setChatHistory] = useState([]);
+  const [aiEnabled, setAiEnabled] = useState(() => {
+    const saved = localStorage.getItem('aiEnabled');
+    if (saved === null) return true;
+    return saved === 'true';
+  });
   const [conversations, setConversations] = useState(() => {
     const saved = localStorage.getItem('conversations');
     if (saved) {
@@ -47,6 +52,11 @@ function App() {
       localStorage.setItem('activeConversationId', activeConversationId);
     }
   }, [activeConversationId]);
+  
+  // Persist AI toggle
+  useEffect(() => {
+    localStorage.setItem('aiEnabled', aiEnabled ? 'true' : 'false');
+  }, [aiEnabled]);
   
   // Update the active conversation with current chat history
   useEffect(() => {
@@ -124,11 +134,26 @@ function App() {
       createNewChat();
     }
     
-    setIsLoading(true);
     // Add user question to chat history
     const userMessage = { type: 'user', content: question, timestamp: new Date().toISOString() };
     setChatHistory(prev => [...prev, userMessage]);
     
+    if (!aiEnabled) {
+      if (conversations.find(conv => conv.id === activeConversationId)?.messages.length === 0) {
+        const title = question.length > 30 ? question.substring(0, 30) + '...' : question;
+        setConversations(prev => 
+          prev.map(conv => 
+            conv.id === activeConversationId 
+              ? { ...conv, title }
+              : conv
+          )
+        );
+      }
+      setQuestion("");
+      return;
+    }
+
+    setIsLoading(true);
     try {
       const response = await api.post(
         '/ai/generate',
@@ -269,7 +294,12 @@ function App() {
                 </svg>
                 New Chat
               </button>
-              <div className="text-sm bg-blue-700 px-3 py-1 rounded-full shadow-sm">Powered by Gemini</div>
+              <button
+                onClick={() => setAiEnabled(prev => !prev)}
+                className={`text-sm px-3 py-1 rounded-full shadow-sm ${aiEnabled ? 'bg-green-600 hover:bg-green-700' : 'bg-gray-600 hover:bg-gray-700'}`}
+              >
+                {aiEnabled ? 'AI: On' : 'AI: Off'}
+              </button>
             </div>
           </div>
         </header>
