@@ -237,20 +237,24 @@ function App() {
   };
 
   return (
-    <div className="flex h-screen futuristic-bg">
+    <div className="flex h-screen space-bg">
+      <div className="starfield"></div>
+      <div className="starfield-2"></div>
+      <div className="nebula"></div>
+      <div className="relative z-10 flex w-full">
       {/* Sidebar */}
       <div className={`bg-gray-800 text-white futuristic-sidebar flex flex-col transition-all duration-300 ${isSidebarOpen ? 'w-72' : 'w-0'}`}>
         <div className="p-4 flex items-center justify-between">
           <h2 className="text-xl font-bold">Conversations</h2>
-          <button 
+          {/* <button 
             onClick={createNewChat}
-            className="btn-aurora text-white p-2 rounded-full"
+            className="cosmic-btn text-white p-2 rounded-full"
             title="New Chat"
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
               <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
             </svg>
-          </button>
+          </button> */}
         </div>
         {/* Conversation List */}
         <div className="flex-1 overflow-y-auto">
@@ -291,10 +295,10 @@ function App() {
       {/* Main Content */}
       <div className="flex flex-col flex-1 overflow-hidden">
         {/* Header */}
-        <header className="futuristic-header toolbar-compact text-white shadow-md flex items-center">
+        <header className="cosmic-header-glass toolbar-compact text-white shadow-md flex items-center">
           <button 
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-            className="mr-4 p-1 rounded btn-aurora transition-colors"
+            className="mr-4 p-1 rounded cosmic-btn transition-colors"
             title={isSidebarOpen ? "Hide sidebar" : "Show sidebar"}
           >
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -306,7 +310,7 @@ function App() {
             <div className="flex items-center space-x-2">
               <button 
                 onClick={createNewChat}
-                className="btn-aurora px-2 py-1 rounded-md text-sm flex items-center"
+                className="cosmic-btn px-2 py-1 rounded-md text-sm flex items-center"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
@@ -326,7 +330,7 @@ function App() {
         {/* Chat Container */}
         <div 
           ref={chatContainerRef}
-          className="flex-1 overflow-y-auto p-3 space-y-3 max-w-4xl mx-auto w-full bg-gray-800 futuristic-panel"
+          className="flex-1 overflow-y-auto p-3 space-y-3 max-w-4xl mx-auto w-full cosmic-panel-glass"
       >
         {chatHistory.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-gray-400">
@@ -344,8 +348,8 @@ function App() {
             >
               <div 
                 className={`max-w-[80%] rounded-lg p-4 shadow message-enter ${message.type === 'user' 
-                  ? 'bg-blue-600 text-white rounded-br-none' 
-                  : 'bg-gray-700 text-gray-100 rounded-bl-none'}`}
+                  ? 'cosmic-bubble-user text-white rounded-br-none' 
+                  : 'cosmic-bubble-ai text-gray-100 rounded-bl-none'}`}
               >
                 {message.type === 'user' ? (
                   <div className="whitespace-pre-wrap">{message.content}</div>
@@ -380,14 +384,14 @@ function App() {
       </div>
 
         {/* Input Area */}
-        <div className="dock-compact futuristic-dock-line bg-gray-800">
+        <div className="dock-compact futuristic-dock-line cosmic-dock-glass">
           <div className="flex items-center space-x-2 max-w-4xl mx-auto">
             <textarea
               value={question} 
               onChange={(e) => setQuestion(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Type your message here..."
-              className="flex-1 px-3 py-2 rounded-lg bg-gray-700 neon-input text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-600 resize-none h-11"
+              className="flex-1 px-3 py-2 rounded-lg bg-gray-700 cosmic-input text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-600 resize-none h-11"
               rows="1"
               disabled={isLoading}
             ></textarea>
@@ -396,7 +400,7 @@ function App() {
               disabled={isLoading || !question.trim()}
               className={`px-3 py-2 rounded-lg font-medium flex items-center justify-center ${isLoading || !question.trim() 
                 ? 'bg-gray-600 text-gray-400 cursor-not-allowed' 
-                : 'btn-aurora text-white transition-colors'}`}
+                : 'cosmic-btn text-white transition-colors'}`}
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                 <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
@@ -405,6 +409,7 @@ function App() {
           </div>
         </div>
      </div>
+    </div>
     </div>
   )
 }

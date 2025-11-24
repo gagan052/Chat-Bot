@@ -310,17 +310,6 @@ pre {
   padding: 0.5rem 0.75rem;
 }
 
-.btn-aurora {
-  background: linear-gradient(135deg, #22d3ee, #8b5cf6);
-  background-size: 200% 200%;
-  animation: gradientShift 10s ease infinite;
-  box-shadow: 0 0 20px rgba(139, 92, 246, 0.35);
-}
-
-.btn-aurora:hover {
-  filter: brightness(1.1);
-  box-shadow: 0 0 30px rgba(139, 92, 246, 0.55);
-}
 
 .futuristic-sidebar {
   backdrop-filter: blur(10px);
@@ -385,4 +374,114 @@ pre {
   0% { transform: translateX(-100%); }
   50% { transform: translateX(0%); }
   100% { transform: translateX(100%); }
+}
+
+.space-bg {
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(1200px circle at 20% 10%, rgba(79,70,229,0.20), transparent 45%),
+              radial-gradient(1000px circle at 80% 90%, rgba(3,105,161,0.20), transparent 45%),
+              linear-gradient(180deg, #070b1a 0%, #0a1024 50%, #0b1221 100%);
+}
+
+.starfield {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(2px 2px at 10% 20%, rgba(255,255,255,0.8) 50%, transparent 51%),
+    radial-gradient(2px 2px at 30% 80%, rgba(182, 225, 255, 0.8) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 60% 30%, rgba(255,255,255,0.7) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 80% 60%, rgba(195, 245, 255, 0.8) 50%, transparent 51%),
+    radial-gradient(2px 2px at 25% 50%, rgba(255,255,255,0.75) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 70% 15%, rgba(173, 216, 255, 0.8) 50%, transparent 51%);
+  animation: twinkle 6s ease-in-out infinite;
+}
+
+.starfield-2 {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(1.5px 1.5px at 15% 35%, rgba(255,255,255,0.6) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 45% 65%, rgba(160, 220, 255, 0.6) 50%, transparent 51%),
+    radial-gradient(1.2px 1.2px at 85% 25%, rgba(255,255,255,0.6) 50%, transparent 51%),
+    radial-gradient(1.2px 1.2px at 55% 85%, rgba(160, 220, 255, 0.6) 50%, transparent 51%);
+  animation: drift 30s linear infinite;
+  opacity: 0.7;
+}
+
+.nebula {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: conic-gradient(from 180deg at 50% 50%, rgba(99,102,241,0.10), rgba(34,197,235,0.10), rgba(168,85,247,0.10), rgba(99,102,241,0.10));
+  filter: blur(80px);
+}
+
+.cosmic-header {
+  position: relative;
+  background: linear-gradient(90deg, #0ea5e9, #4f46e5, #7c3aed);
+  background-size: 300% 300%;
+  animation: gradientShift 16s ease infinite;
+  box-shadow: 0 12px 36px rgba(124, 58, 237, 0.35);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.22);
+}
+
+.cosmic-panel {
+  backdrop-filter: blur(8px);
+  background: rgba(15, 23, 42, 0.6);
+  box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.22), 0 20px 40px rgba(2, 6, 23, 0.6);
+}
+
+.cosmic-btn {
+  background: linear-gradient(135deg, #22d3ee, #8b5cf6);
+  background-size: 220% 220%;
+  animation: gradientShift 12s ease infinite;
+  box-shadow: 0 0 24px rgba(139, 92, 246, 0.4);
+}
+
+.cosmic-input {
+  background: rgba(17, 24, 39, 0.6);
+  border: 1px solid rgba(99, 102, 241, 0.28);
+  box-shadow: inset 0 0 18px rgba(99, 102, 241, 0.20);
+}
+
+.cosmic-header-glass {
+  backdrop-filter: blur(12px);
+  background: rgba(10, 16, 36, 0.35);
+  box-shadow: 0 12px 36px rgba(124, 58, 237, 0.35);
+  border-bottom: 1px solid rgba(148, 163, 184, 0.22);
+}
+
+.cosmic-panel-glass {
+  backdrop-filter: blur(12px);
+  background: rgba(10, 16, 36, 0.28);
+  box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.22), 0 20px 40px rgba(2, 6, 23, 0.6);
+}
+
+.cosmic-dock-glass {
+  backdrop-filter: blur(10px);
+  background: rgba(10, 16, 36, 0.24);
+  border-top: 1px solid rgba(148, 163, 184, 0.18);
+}
+
+.cosmic-bubble-user {
+  background: linear-gradient(135deg, rgba(37, 99, 235, 0.9), rgba(124, 58, 237, 0.9));
+  box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.22), 0 8px 24px rgba(37, 99, 235, 0.35);
+}
+
+.cosmic-bubble-ai {
+  background: rgba(31, 41, 55, 0.8);
+  box-shadow: 0 0 0 1px rgba(99, 102, 241, 0.22), 0 8px 24px rgba(2, 6, 23, 0.55);
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.7; filter: brightness(0.9); }
+  50% { opacity: 1; filter: brightness(1.1); }
+}
+
+@keyframes drift {
+  0% { transform: translateY(0px); }
+  100% { transform: translateY(-30px); }
 }
